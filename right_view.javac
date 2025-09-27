@@ -32,11 +32,11 @@ class Main {
     }
     public static void right_view(Queue<Node> q)
     {
-        int count=0;
+        int count=1;
         int i=0;
         while(!q.isEmpty())
-        {
-            count=i;
+        {   
+            
             i=0;
             while(count>0)
             {
@@ -51,23 +51,27 @@ class Main {
                     q.add(n.right);
                     i++;
                 }
-                count--;
+                --count;
                 System.out.println(n.value);
-                while(count>0)
+                while(count>0&&!q.isEmpty())
                 {
-                     if(n.left!=null)
+                    Node n1=q.remove();
+                     if(n1.left!=null)
                 {
-                    q.add(n.left);
+                    q.add(n1.left);
                     i++;
                 }
-                if(n.right!=null)
+                    if(n1.right!=null)
                 {
-                    q.add(n.right);
+                    q.add(n1.right);
                     i++;
                 }
-                count--;
+                --count;
+            System.out.println("level count"+count);
                 }
             }
+            // System.out.println("level count"+i);
+            count=i;
         }
     }
 }
