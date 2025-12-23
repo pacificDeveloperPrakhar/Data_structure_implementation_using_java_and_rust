@@ -1,8 +1,8 @@
 use std::vec::*;
 pub fn main()
 {
-    let arr=vec![1,2,2,3];
-    let target:i64=3;
+    let arr=vec![1,2,3,4];
+    let target:i64=5;
     let mut tab=vec![vec![0;target as usize +1];arr.len()];
     let result=subset_with_k(&arr,target,&mut tab);
     println!("{:?}",tab);
