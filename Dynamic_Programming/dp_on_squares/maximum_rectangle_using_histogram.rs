@@ -3,12 +3,11 @@ use std::vec::*;
 pub fn main()
 {
     // Example binary matrix
-    let sqr: Vec<Vec<i32>> = vec![
-        vec![1, 0, 1, 1],
-        vec![1, 1, 1, 1],
-        vec![1, 1, 1, 0],
-        vec![1, 1, 1, 1],
-    ];
+    let sqr: Vec<Vec<i32>> =  vec![
+    vec![0, 1, 1, 1],
+    vec![1, 1, 1, 1],
+    vec![0, 1, 1, 1],
+];
 
     let result = maximum_rectangle_gph(&sqr);
     println!("Maximum Rectangle Area: {}", result);
