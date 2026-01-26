@@ -3,7 +3,7 @@ on: [push] # This triggers the action every time you push code
 
 jobs:
   display-message:
-    runs-on: ubuntu-latest  # This tells GitHub to use the runner you just configured
+    runs-on: self-hosted  # This tells GitHub to use the runner you just configured
     steps:
       - name: Show Message
         run: echo "A push has been made to the repository!"
