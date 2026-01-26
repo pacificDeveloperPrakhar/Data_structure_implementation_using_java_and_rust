@@ -1,0 +1,18 @@
+name: Rust CI (Arch)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        run: sudo pacman -Sy --noconfirm rust cargo
+
+
