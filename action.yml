@@ -1,18 +1,9 @@
-name: Rust CI (Arch)
-
-on:
-  push:
-    branches: [ main ]
-  pull_request:
+name: Push Notification
+on: [push] # This triggers the action every time you push code
 
 jobs:
-  build:
-    runs-on: self-hosted
-
+  display-message:
+    runs-on: self-hosted  # This tells GitHub to use the runner you just configured
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Install Rust
-        run: sudo pacman -Sy --noconfirm rust cargo
-
-
+      - name: Show Message
+        run: echo "A push has been made to the repository!"
