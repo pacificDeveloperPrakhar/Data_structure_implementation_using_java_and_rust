@@ -55,7 +55,6 @@ function runCommand(label, command) {
     
 
     cmd.stdout.on("data", data => {
-      console.log(label)
       update_readme(label,data.toString());
       
     });
@@ -68,7 +67,8 @@ function runCommand(label, command) {
       if (code !== 0) {
         reject(new Error(`${label} exited with code ${code}`));
       } else {
-        resolve("shell did not close properly");
+
+        resolve("closed the cmd");
       }
     });
   });
@@ -110,7 +110,7 @@ async function run_script() {
     console.log("Total files      :", totalFiles);
     console.log("Java committed   :", javaCommitted);
     console.log("Rust committed   :", rustCommitted);
-
+    process.exit(0);
   } catch (err) {
     console.error(err.message);
   }

@@ -1,9 +1,30 @@
 name: Push Notification
-on: [push] # This triggers the action every time you push code
+
+on:
+  push:
 
 jobs:
   display-message:
-    runs-on: self-hosted  # This tells GitHub to use the runner you just configured
+    runs-on: self-hosted
+
     steps:
       - name: Show Message
         run: echo "A push has been made to the repository!"
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Update stats
+        run: node ./bot.js
+
+      - name: Commit and push changes
+        run: |
+
+          git add .
+
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "bot: update stats [skip ci]"
+            git push
+          fi

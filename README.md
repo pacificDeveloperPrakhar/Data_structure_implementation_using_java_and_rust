@@ -27,8 +27,7 @@ pie showData
 
     "Java Commited (Today)" : 0
 
-    "Rust Commited (Today)" : 0
-
+    "Rust Commited (Today)" : {{total_commit_rust}}
 
 ```
 
