@@ -1,74 +1,23 @@
-const fs = require("fs");
-let input=""
-const label=process.env.LABEL || false;
-
-let text=""
-process.stdin.on("data", chunk => {
-  input += chunk.toString();
-});
-
-process.stdin.on("end", () => {
-  const files = input
-    .trim()
-    .split("\n")
-    .filter(Boolean);
-
-  console.log("📂 Files received:", files.length);
-  update_readme(label,files.length)
-});
-
-//find . -type f \( -name "*.rs" -o -name "*.java" \) | LABEL="total_files" node ./bot.js"
-
-
-function update_readme(label,input)
-{
-
-
-fs.readFile("./README_temp", (err, buffer) => {
-  if (err) {
-    console.error(err);
-    return;
-  }
-
-  
-  if (!text)
-    {
-    text=buffer;
-    text=text.toString();
-  }
-
-  text=text.replace(`{{${label}}}`,input);
-  // console.log(text)
-  console.log(text)
-  fs.writeFileSync("./README.md", text);
-  
-});
-
-}
-
+const fs = require("fs").promises;
 const { spawn } = require("child_process");
 
-function runCommand(label, command) {
+/**
+ * Executes a shell command and returns the trimmed output
+ */
+function runCommand(command) {
   return new Promise((resolve, reject) => {
     const cmd = spawn("sh", ["-c", command]);
+    let output = "";
+    let errorOutput = "";
 
-    
-
-    cmd.stdout.on("data", data => {
-      update_readme(label,data.toString());
-      
-    });
-
-    cmd.stderr.on("data", data => {
-      console.error(`[${label} error]`, data.toString());
-    });
+    cmd.stdout.on("data", data => output += data.toString());
+    cmd.stderr.on("data", data => errorOutput += data.toString());
 
     cmd.on("close", code => {
       if (code !== 0) {
-        reject(new Error(`${label} exited with code ${code}`));
+        reject(new Error(`Command failed with code ${code}: ${errorOutput}`));
       } else {
-
-        resolve("closed the cmd");
+        resolve(output.trim());
       }
     });
   });
@@ -76,43 +25,42 @@ function runCommand(label, command) {
 
 async function run_script() {
   try {
-    const javaCmd =
-      'find . -type f -name "*.java" | wc -l';
+    // 1. Define all commands
+    const commands = {
+      total_files_java: 'find . -type f -name "*.java" | wc -l',
+      total_files_rust: 'find . -type f -name "*.rs" | wc -l',
+      total_files: 'find . -type f \\( -name "*.java" -o -name "*.rs" \\) | wc -l',
+      total_commit_java: 'git log --since="today" --name-only --pretty="" | grep "\\.java$" | sort -u | wc -l',
+      total_commit_rust: 'git log --since="today" --name-only --pretty="" | grep "\\.rs$" | sort -u | wc -l'
+    };
 
-    const rustCmd =
-      'find . -type f -name "*.rs" | wc -l';
+    // 2. Run all commands in parallel
+    console.log("📊 Gathering metrics...");
+    const keys = Object.keys(commands);
+    const results = await Promise.all(keys.map(key => runCommand(commands[key])));
 
-    const totalCmd =
-      'find . -type f \\( -name "*.java" -o -name "*.rs" \\) | wc -l';
+    // 3. Map results back to labels
+    const data = {};
+    keys.forEach((key, index) => {
+      data[key] = results[index];
+    });
 
-    const javaCommittedCmd =
-      'git log --since="today" --name-only --pretty="" | grep "\\.java$" | sort -u | wc -l';
+    // 4. Read the template
+    let template = await fs.readFile("./README_temp", "utf8");
 
-    const rustCommittedCmd =
-      'git log --since="today" --name-only --pretty="" | grep "\\.rs$" | sort -u | wc -l';
+    // 5. Replace all placeholders
+    for (const [label, value] of Object.entries(data)) {
+      console.log(`✅ ${label}: ${value}`);
+      const regex = new RegExp(`{{${label}}}`, "g");
+      template = template.replace(regex, value);
+    }
 
-    const javaFiles = await runCommand("total_files_java", javaCmd);
-    const rustFiles = await runCommand("total_files_rust", rustCmd);
-    const totalFiles = await runCommand("total_files", totalCmd);
+    // 6. Write the final file
+    await fs.writeFile("./README.md", template);
+    console.log("🚀 README.md updated successfully!");
 
-    const javaCommitted = await runCommand(
-      "total_commit_java",
-      javaCommittedCmd
-    );
-
-    const rustCommitted = await runCommand(
-      "total_commit_rust",
-      rustCommittedCmd
-    );
-
-    console.log("Total Java files :", javaFiles);
-    console.log("Total Rust files :", rustFiles);
-    console.log("Total files      :", totalFiles);
-    console.log("Java committed   :", javaCommitted);
-    console.log("Rust committed   :", rustCommitted);
-    process.exit(0);
   } catch (err) {
-    console.error(err.message);
+    console.error("❌ Error updating README:", err.message);
   }
 }
 
