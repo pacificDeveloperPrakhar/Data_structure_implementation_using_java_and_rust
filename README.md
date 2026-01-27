@@ -7,7 +7,8 @@ The pie chart gives an instant visual on your file count.
 
 Code snippet
 
-```
+```mermaid
+
 %%{init: {'theme': 'base', 'themeVariables': {
 'pie1': '#007396',
 'pie2': '#CE412B',
