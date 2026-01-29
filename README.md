@@ -5,7 +5,7 @@
 This readme file will be updated automatically on every push event a workflow has been coded to update the readme file
 The pie chart gives an instant visual on your file count.
 
-# Total Files 108
+# Total Files 109
 Code snippet
 
 ```mermaid
@@ -21,7 +21,7 @@ Code snippet
 pie showData
     title "Problem Solved and Overview"
     "Total Java Files" : 29
-    "Total Rust Files" : 79
+    "Total Rust Files" : 80
     "Java Commited (Today)" : 0
     "Rust Commited (Today)" : 0
 
@@ -41,7 +41,7 @@ pie showData
 
 29
 
-79
+80
 
 **Today's Commits**
 
