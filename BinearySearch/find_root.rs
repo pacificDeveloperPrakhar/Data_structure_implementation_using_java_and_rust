@@ -43,6 +43,8 @@ fn main() {
 
     let val = 10;
 
-    let root = find_root(arr, val);
-    println!("Approx sqrt of {} = {:.2}", val, root);
+    // let root = find_root(arr, val);
+    // println!("Approx sqrt of {} = {:.2}", val, root);
+    let mut x_idx:usize=2;
+    let mut y_idx=x_idx as isize;
 }
